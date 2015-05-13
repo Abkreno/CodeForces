@@ -1,0 +1,37 @@
+package Dev293;
+
+import java.util.Scanner;
+
+public class D {
+
+	public static void main(String[] args) {
+		Scanner hp = new Scanner(System.in);
+		int n = hp.nextInt();
+		double p = hp.nextDouble();
+		int t = hp.nextInt();
+		int m = n < t ? n : t;
+		double[] x = new double[n + 2];
+		double trans;
+		double mean = 0;
+		x[0] = 1;
+		for (int i = 0; i < m; i++) {
+			for (int j = i+1; j > 0; j--) {
+				trans = p * x[j - 1];
+				x[j] += trans;
+				x[j - 1] -= trans;
+			}
+		}
+		for (int i = m; i < t; i++) {
+			for (int j = n; j > 0; j--) {
+				trans = p * x[j - 1];
+				x[j] += trans;
+				x[j - 1] -= trans;
+			}
+		}
+		for (int i = 0; i < n+1; i++) {
+			mean+= i*x[i];
+		}
+		System.out.println(mean);
+	}
+
+}
