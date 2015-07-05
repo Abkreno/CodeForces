@@ -1,75 +1,73 @@
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Scanner;
 
 public class A {
-	static class Calendar2 implements Comparable<Calendar2> {
-		GregorianCalendar start, end;
-		int p;
+	static int N = 10;
+	static int nums[] = new int[N + 1];
+	static int sums[] = new int[N + 1];
+	static int c[] = new int[N + 1];
+	static int cnt[][] = new int[201][N + 1];
+	static int INF = 1000;
 
-		public Calendar2(int day, int month, int t, int p) {
-			end = new GregorianCalendar(2013, month - 1, day - 1);
-			start = new GregorianCalendar(2013, month - 1, day - t);
-			this.p = p;
+	public static void main(String[] args) throws Exception {
+		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+
+		int n, i, j, temp, currCount, neededCount, maxN = 0;
+		int currEfort, minEfort = INF;
+		n = Integer.parseInt(bf.readLine());
+		String[] l = bf.readLine().split(" ");
+		for (i = 0; i < n; i++)
+			nums[i] = Integer.parseInt(l[i]);
+		l = bf.readLine().split(" ");
+		for (i = 0; i < n; i++) {
+			temp = Integer.parseInt(l[i]);
+			maxN = Math.max(maxN, nums[i]);
+			sums[nums[i]] += temp;
+			c[nums[i]]++;
+			cnt[temp][nums[i]]++;
 		}
-
-		@Override
-		public int compareTo(Calendar2 o) {
-			return start.compareTo(o.start);
+		N = maxN;
+		for (i = 1; i <= N; i++) {
+			sums[i] += sums[i - 1];
+			c[i] += c[i - 1];
 		}
+		for (i = 1; i <= 200; i++)
+			for (j = 1; j <= N; j++)
+				cnt[i][j] += cnt[i][j - 1];
 
-		public int getStartDay() {
-			return start.get(Calendar.DAY_OF_MONTH);
+		for (int k = 0; k < n; k++) {
+			i = nums[k];
+			currEfort = sums[N] - sums[i];
+			currCount = c[i] - c[i - 1];
+			neededCount = (n - (currCount * 2 - 1));
+			neededCount -= c[N] - c[i];
+			j = 1;
+			if(neededCount>0)
+			while (j < 201) {
+				if (neededCount <= cnt[j][i - 1]) {
+					currEfort += neededCount * j;
+					neededCount = 0;
+					break;
+				} else {
+					neededCount -= cnt[j][i - 1];
+					currEfort += cnt[j][i - 1] * j;
+				}
+				j++;
+			}
+			if (neededCount <= 0)
+				minEfort = Math.min(minEfort, currEfort);
 		}
-
-		public int getEndDay() {
-			return end.get(Calendar.DAY_OF_MONTH);
-		}
-
-		public int getStartM() {
-			return start.get(Calendar.MONTH);
-		}
-
-		public int getEndM() {
-			return end.get(Calendar.MONTH);
-		}
-
-		public int compare(Calendar2 o) {
-			return start.compareTo(o.start);
-		}
-
-		public String toString() {
-			return start.get(Calendar.DAY_OF_MONTH) + " / "
-					+ start.get(Calendar.MONTH) + ">>> "
-					+ end.get(Calendar.DAY_OF_MONTH) + " / "
-					+ end.get(Calendar.MONTH);
-		}
-
+		System.out.println(minEfort);
 	}
 
-	public static void main(String[] args) throws NumberFormatException,
-			IOException {
-		Scanner sc = new Scanner(System.in);
-		int n = sc.nextInt();
-		Calendar2[] calendar = new Calendar2[n];
-		for (int i = 0; i < n; i++) {
-			int m = sc.nextInt();
-			int d = sc.nextInt();
-			int people = sc.nextInt();
-			int time = sc.nextInt();
-			calendar[i] = new Calendar2(d, m, time, people);
-		}
-		Arrays.sort(calendar);
-		int count = 0;
-		int max = -1;
-		for (int i = 0; i < calendar.length; i++) {
-			count += calendar[i].p;
-			if (calendar[i].compare(calendar[i - 1]) > 0) {
-				count -= calendar[i - 1].p;
-			}
-		}
-		System.out.println(Arrays.toString(calendar));
+	static double eps = 1e-9;
+
+	static int compare(double a, double b) {
+		if (Math.abs(a - b) < eps)
+			return 0;
+		if (a - b < 0.0)
+			return -1;
+		return 1;
 	}
 }
