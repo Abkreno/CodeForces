@@ -1,64 +1,46 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.Scanner;
 
 public class A {
-	static int N = 10;
-	static int nums[] = new int[N + 1];
-	static int sums[] = new int[N + 1];
-	static int c[] = new int[N + 1];
-	static int cnt[][] = new int[201][N + 1];
-	static int INF = 1000;
 
 	public static void main(String[] args) throws Exception {
-		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
-		int n, i, j, temp, currCount, neededCount, maxN = 0;
-		int currEfort, minEfort = INF;
-		n = Integer.parseInt(bf.readLine());
-		String[] l = bf.readLine().split(" ");
-		for (i = 0; i < n; i++)
-			nums[i] = Integer.parseInt(l[i]);
-		l = bf.readLine().split(" ");
-		for (i = 0; i < n; i++) {
-			temp = Integer.parseInt(l[i]);
-			maxN = Math.max(maxN, nums[i]);
-			sums[nums[i]] += temp;
-			c[nums[i]]++;
-			cnt[temp][nums[i]]++;
-		}
-		N = maxN;
-		for (i = 1; i <= N; i++) {
-			sums[i] += sums[i - 1];
-			c[i] += c[i - 1];
-		}
-		for (i = 1; i <= 200; i++)
-			for (j = 1; j <= N; j++)
-				cnt[i][j] += cnt[i][j - 1];
-
-		for (int k = 0; k < n; k++) {
-			i = nums[k];
-			currEfort = sums[N] - sums[i];
-			currCount = c[i] - c[i - 1];
-			neededCount = (n - (currCount * 2 - 1));
-			neededCount -= c[N] - c[i];
-			j = 1;
-			if(neededCount>0)
-			while (j < 201) {
-				if (neededCount <= cnt[j][i - 1]) {
-					currEfort += neededCount * j;
-					neededCount = 0;
-					break;
-				} else {
-					neededCount -= cnt[j][i - 1];
-					currEfort += cnt[j][i - 1] * j;
-				}
-				j++;
+		Scanner sc = new Scanner(System.in);
+		int n = sc.nextInt();
+		sc.nextLine();
+		char[] q = sc.nextLine().toCharArray();
+		int sande[][] = new int[2][n];
+		int count = 1;
+		if (n == 1) {
+			System.out.println("YES");
+			for (int i = 0; i < q.length; i++) {
+				System.out.print(q[i]);
 			}
-			if (neededCount <= 0)
-				minEfort = Math.min(minEfort, currEfort);
+			System.out.println();
+			return;
 		}
-		System.out.println(minEfort);
+		boolean occured[] = new boolean[26];
+		occured[q[0] - 'a'] = true;
+		StringBuffer ans = new StringBuffer();
+		for (int i = 1; i < q.length; i++) {
+			if (!occured[q[i] - 'a']) {
+				occured[q[i] - 'a'] = true;
+				sande[0][count] = i;
+				sande[1][count - 1] = i - 1;
+				count++;
+				if (count == n) {
+					sande[1][count - 1] = q.length - 1;
+					ans.append("YES\n");
+					for (int j = 0; j < n; j++) {
+						for (int k = sande[0][j]; k <= sande[1][j]; k++) {
+							ans.append(q[k]);
+						}
+						ans.append("\n");
+					}
+					System.out.print(ans);
+					return;
+				}
+			}
+		}
+		System.out.println("NO");
 	}
 
 	static double eps = 1e-9;
