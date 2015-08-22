@@ -1,3 +1,5 @@
+package A2_Div2_C;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
