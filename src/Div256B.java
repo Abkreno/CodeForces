@@ -4,40 +4,40 @@ import java.io.InputStreamReader;
 public class Div256B {
 	public static void main(String[] args) throws Exception {
 		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-		int n = Integer.parseInt(bf.readLine());
-		String[] l = bf.readLine().split(" ");
-		int nums[] = new int[n];
-		for (int i = 0; i < nums.length; i++) {
-			nums[i] = Integer.parseInt(l[i]);
-		}
-		boolean f = true;
-		for (int i = 0; i < n - 1; i++) {
-			if (nums[i] > nums[i + 1]) {
-				f = false;
-				break;
+		char[] s = bf.readLine().toCharArray();
+		char[] t = bf.readLine().toCharArray();
+		int j = 0;
+		int countS[] = new int[26];
+		int countT[] = new int[26];
+		for (int i = 0; j < t.length && i < s.length; i++) {
+			if (s[i] == t[j]) {
+				j++;
+				if (j == t.length) {
+					System.out.println("automaton");
+					return;
+				}
 			}
 		}
-		if (f) {
-			System.out.println(0);
-			return;
+		for (int i = 0; i < s.length; i++) {
+			countS[s[i] - 'a']++;
 		}
-		int leftMost = nums[0];
-		int shifts = 0;
-		for (int i = n - 1; i >= 0; i--) {
-			if (nums[i] <= leftMost) {
-				leftMost = nums[i];
-				shifts++;
-			} else {
-				for (int j = 0; j < i; j++) {
-					if (nums[j] > nums[j + 1]) {
-						System.out.println(-1);
-						return;
-					}
-				}
-				System.out.println(shifts);
+		for (int i = 0; i < t.length; i++) {
+			countT[t[i] - 'a']++;
+		}
+		boolean both = false;
+		for (int i = 0; i < 26; i++) {
+			if (countT[i] > countS[i]) {
+				System.out.println("need tree");
 				return;
 			}
+			if (countS[i] > countT[i]) {
+				both = true;
+			}
 		}
-		System.out.println(shifts);
+		if (both) {
+			System.out.println("both");
+		} else {
+			System.out.println("array");
+		}
 	}
 }
